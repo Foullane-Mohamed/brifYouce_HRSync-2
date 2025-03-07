@@ -14,7 +14,6 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        // قم بتضمين هذه البيانات لتحديث لوحة التحكم
         $totalEmployees = User::count();
         $totalDepartments = Department::count();
         $pendingLeaveRequests = LeaveRequest::where('status', 'pending')->count();
@@ -28,7 +27,6 @@ class AdminController extends Controller
         ));
     }
     
-    // User Management
     public function userIndex()
     {
         $users = User::with('role')->paginate(10);
@@ -122,7 +120,6 @@ class AdminController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
     
-    // Department Management
     public function departmentIndex()
     {
         $departments = Department::with('manager')->paginate(10);
@@ -135,7 +132,6 @@ class AdminController extends Controller
             $query->where('slug', 'employee')->orWhere('slug', 'hr');
         })->get();
         
-        // إذا لم يكن هناك مستخدمين، احصل على جميع المستخدمين
         if ($managers->isEmpty()) {
             $managers = User::all();
         }
@@ -168,7 +164,6 @@ class AdminController extends Controller
             $query->where('slug', 'employee')->orWhere('slug', 'hr');
         })->get();
         
-        // إذا لم يكن هناك مستخدمين، احصل على جميع المستخدمين
         if ($managers->isEmpty()) {
             $managers = User::all();
         }
@@ -196,12 +191,10 @@ class AdminController extends Controller
         return redirect()->route('admin.departments.index')->with('success', 'Department deleted successfully.');
     }
     
-    // Leave Request Management
     public function leaveRequestIndex(Request $request)
     {
         $query = LeaveRequest::with(['user', 'approver']);
         
-        // تصفية حسب الحالة إذا تم تحديدها
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
